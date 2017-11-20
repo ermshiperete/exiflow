@@ -1,20 +1,10 @@
-<Addin namespace="FSpot"
-	name="ExiflowDevelopInUFRaw"
-	version="0.8"
-	description="Develop the image in UFRaw, saves the result as a new version, supporting revision numbers of the exiflow project ( http://exiflow.org/ )"
-	url="http://exiflow.org/"
-	author="Sebastian Berthold"
-	category="Tools">
+<Addin namespace="FSpot" name="ExiflowDevelopInUFRaw" version="0.9" description="Develop the image in UFRaw, saves the result as a new version, supporting revision numbers of the exiflow project ( http://exiflow.org/ )" url="http://exiflow.org/" author="Sebastian Berthold" category="Tools">
 	<Dependencies>
-		<Addin id="Core" version="0.8"/>
+		<Addin id="Core" version="0.9"/>
 	</Dependencies>
 	<Extension path = "/FSpot/Menus/PhotoPopup">
 		<Command id = "ExiflowDevelopInUFRaw" _label = "Exiflow: _Develop in UFRaw" command_type = "ExiflowDevelopInUFRawExtension.ExiflowDevelopInUFRaw" insertbefore="OpenWith"/>
-<!--		<Condition id="PhotoSelection" selection="multiple">
-			<Command id = "DevelopInUFRawBatchExiflow" _label = "Exiflow: Batch Develop" command_type = "ExiflowDevelopInUFRawExtension.DevelopInUFRawBatchExiflow" insertbefore="OpenWith"/>
-		</Condition>
+		<!--		<Condition id="PhotoSelection" selection="multiple"><Command id = "DevelopInUFRawBatchExiflow" _label = "Exiflow: Batch Develop" command_type = "ExiflowDevelopInUFRawExtension.DevelopInUFRawBatchExiflow" insertbefore="OpenWith"/></Condition>
 -->
 	</Extension>
 </Addin>
-
-

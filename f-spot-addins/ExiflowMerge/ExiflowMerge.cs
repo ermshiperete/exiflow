@@ -46,7 +46,7 @@ namespace ExiflowMergeExtension
 				"Do it now"))
 				return;
 
-			Photo [] photos = App.Instance.Database.Photos.Query ((Tag [])null, null, null, null);
+			Photo [] photos = App.Instance.Database.Photos.Query ((FSpot.Query.IQueryCondition)null);
 			Array.Sort (photos, new CompareName ());
 
 			Photo previousphoto = null;
@@ -75,7 +75,7 @@ namespace ExiflowMergeExtension
 
 			foreach (MergeRequest mr in merge_requests)
 				mr.Merge ();
-			
+
 			App.Instance.Organizer.UpdateQuery ();
 		}
 
@@ -115,14 +115,14 @@ namespace ExiflowMergeExtension
 			{
 				Photo p1 = (Photo)obj1;
 				Photo p2 = (Photo)obj2;
-				if (ImageFile.IsRaw(p2.DefaultVersion.Uri)) {
+				if (App.Instance.Container.Resolve<IImageFileFactory> ().IsRaw(p2.DefaultVersion.Uri)) {
 					return 1;
 				}
 				return String.Compare (p1.DefaultVersion.Uri, p2.DefaultVersion.Uri);
 			}
 		}
 
-		class MergeRequest 
+		class MergeRequest
 		{
 			ArrayList photos;
 
@@ -166,7 +166,7 @@ namespace ExiflowMergeExtension
 						} catch (Exception e) {
 							Console.WriteLine (e);
 						}
-					}	
+					}
 					raw.Changes.DataChanged = true;
 					App.Instance.Database.Photos.Commit (raw);
 					App.Instance.Database.Photos.Remove (jpeg);

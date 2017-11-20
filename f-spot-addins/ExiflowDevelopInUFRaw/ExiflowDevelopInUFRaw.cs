@@ -25,6 +25,7 @@ using FSpot;
 using FSpot.Utils;
 using FSpot.Extensions;
 using FSpot.Imaging;
+using FSpot.Settings;
 using FSpot.UI.Dialog;
 
 namespace ExiflowDevelopInUFRawExtension
@@ -88,7 +89,7 @@ namespace ExiflowDevelopInUFRawExtension
 		string ufraw_args;
 		string ufraw_batch_args;
 
-		public AbstractExiflowDevelopInUFRaw(string executable) 
+		public AbstractExiflowDevelopInUFRaw(string executable)
 		{
 			this.executable = executable;
 		}
@@ -102,7 +103,7 @@ namespace ExiflowDevelopInUFRawExtension
 			LoadPreference (UFRAW_BATCH_ARGUMENTS_KEY);
 
 			PhotoVersion raw = p.GetVersion (Photo.OriginalVersionId) as PhotoVersion;
-			if (!ImageFile.IsRaw (raw.Uri)) {
+			if (!App.Instance.Container.Resolve<IImageFileFactory> ().IsRaw (raw.Uri)) {
 				Log.Warning ("The original version of this image is not a (supported) RAW file");
 				return;
 			}
@@ -128,14 +129,14 @@ namespace ExiflowDevelopInUFRawExtension
 					break;
 				case "ufraw-batch":
 					args += ufraw_batch_args;
-					if (GLib.FileFactory.NewForUri (Path.Combine (FSpot.Core.Global.BaseDirectory, "batch.ufraw")).Exists) {
+					if (GLib.FileFactory.NewForUri (Path.Combine (Global.BaseDirectory, "batch.ufraw")).Exists) {
 						// We found an ID file, use that instead of the raw file
-						idfile = "--conf=" + GLib.Shell.Quote (Path.Combine (FSpot.Core.Global.BaseDirectory, "batch.ufraw"));
+						idfile = "--conf=" + GLib.Shell.Quote (Path.Combine (Global.BaseDirectory, "batch.ufraw"));
 					}
 					break;
 			}
 
-			args += String.Format(" --exif --overwrite --create-id=also --compression={0} --out-type=jpeg {1} --output={2} {3}", 
+			args += String.Format(" --exif --overwrite --create-id=also --compression={0} --out-type=jpeg {1} --output={2} {3}",
 				ufraw_jpeg_quality,
 				idfile,
 				GLib.Shell.Quote (developed.LocalPath),
@@ -151,8 +152,8 @@ namespace ExiflowDevelopInUFRawExtension
 
 			if (GLib.FileFactory.NewForUri (Path.ChangeExtension (developed.ToString (), ".ufraw")).Exists) {
 				// We save our own copy of the last ufraw settings, as ufraw can overwrite it's own last used settings outside f-spot
-				File.Delete (Path.Combine (FSpot.Core.Global.BaseDirectory, "batch.ufraw"));
-				File.Copy (Path.ChangeExtension (developed.LocalPath, ".ufraw"), Path.Combine (FSpot.Core.Global.BaseDirectory, "batch.ufraw"));
+				File.Delete (Path.Combine (Global.BaseDirectory, "batch.ufraw"));
+				File.Copy (Path.ChangeExtension (developed.LocalPath, ".ufraw"), Path.Combine (Global.BaseDirectory, "batch.ufraw"));
 
 				// Rename the ufraw file to match the original RAW filename, instead of the (Developed In UFRaw) filename
 				if (!(Path.ChangeExtension (raw.Uri.LocalPath, ".ufraw") == Path.ChangeExtension (developed.LocalPath, ".ufraw"))){

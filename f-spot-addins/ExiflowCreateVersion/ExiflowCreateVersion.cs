@@ -26,13 +26,14 @@ using Gnome.Vfs;
 using Hyena;
 using FSpot;
 using FSpot.Extensions;
+using FSpot.Utils;
 using FSpot.Widgets;
 using Mono.Unix;
 
 namespace ExiflowCreateVersionExtension
 {
 	public class ExiflowCreateVersion: ICommand
-	{	
+	{
 		protected string dialog_name = "exiflow_create_version_dialog";
 		private Gtk.Dialog dialog;
 
@@ -51,7 +52,7 @@ namespace ExiflowCreateVersionExtension
 		public void Run (object o, EventArgs e)
 		{
 			Console.WriteLine ("EXECUTING ExiflowCreateVersion EXTENSION");
-			
+
 			Window win = new Window ("window");
 			dialog = new Dialog (dialog_name, win, Gtk.DialogFlags.DestroyWithParent);
 
@@ -73,13 +74,13 @@ namespace ExiflowCreateVersionExtension
 			frame_resulting_filename.Child = vbox_resulting_filename;
 				vbox_resulting_filename.PackStart (new_filename_label, true, false, 0);
 				vbox_resulting_filename.PackStart (overwrite_warning_label, true, false, 0);
-			
+
 			Frame frame_open_with = new Frame ("open with");
 			VBox vbox_open_with = new VBox ();
 			frame_open_with.Child = vbox_open_with;
 				vbox_open_with.PackStart (new_filename_label, true, false, 0);
-			
-			
+
+
 			new_version_entry.Changed += new EventHandler (on_new_version_entry_changed);
 			overwrite_file_ok.Toggled += new EventHandler (on_overwrite_file_ok_toggled);
 
@@ -91,7 +92,7 @@ namespace ExiflowCreateVersionExtension
 			foreach (Photo p in App.Instance.Organizer.SelectedPhotos ()) {
 				this.currentphoto = p;
 				//Console.WriteLine ("MimeType: "+ Gnome.Vfs.MimeType.GetMimeTypeForUri (p.DefaultVersionUri.ToString ()));
-				
+
 				//uint default_id = p.DefaultVersionId;
 				//Console.WriteLine ("DefaultVersionId: "+default_id);
 				//string filename = GetNextIntelligentVersionFileNames (p)[0];
@@ -103,7 +104,7 @@ namespace ExiflowCreateVersionExtension
 					Gtk.RadioButton rb = new Gtk.RadioButton (versionrb,GetVersionName(possiblefilenames[i].ToString()));
 					rb.Clicked += new EventHandler(on_versionrb_changed);
 					vbox_versions_left.PackStart (rb, true, false, 0);
-					
+
 				}
 
 				ComboBox owcb = GetComboBox ();
@@ -111,7 +112,7 @@ namespace ExiflowCreateVersionExtension
 
 				dialog.Modal = false;
 				dialog.TransientFor = null;
-			}	
+			}
 
 			VBox vbox_main = new VBox ();
 				vbox_main.PackStart (frame_versions);
@@ -171,7 +172,7 @@ namespace ExiflowCreateVersionExtension
 				GLib.File destination = GLib.FileFactory.NewForUri (new_uri);
 				if (destination.Exists)
 					throw new Exception (String.Format ("An object at this uri {0} already exists", new_uri));
-	
+
 		//FIXME. or better, fix the copy api !
 				GLib.File source = GLib.FileFactory.NewForUri (original_uri);
 				source.Copy (destination, GLib.FileCopyFlags.None, null, null);
@@ -187,8 +188,8 @@ namespace ExiflowCreateVersionExtension
 			                Console.WriteLine ((string) owcb.Model.GetValue (iter, 1));
 			                Console.WriteLine ((string[]) owcb.Model.GetValue (iter, 2));
 					Console.WriteLine ("Getting applications again");
-			
-					ArrayList union = new ArrayList();	
+
+					ArrayList union = new ArrayList();
 //string[] weekDays = new string[] { "image/jpeg", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 					foreach (string mime_type in (string []) owcb.Model.GetValue (iter, 2)) {
 					//foreach (string mime_type in (string []) weekDays) {
@@ -208,13 +209,13 @@ namespace ExiflowCreateVersionExtension
 							uri_list.Append(new_uri.ToString());
 							app.Launch (uri_list);
 						}
-					}	
+					}
 				}
 			} finally {
 				Gtk.Application.Invoke (delegate { dialog.Destroy(); });
 			}
 		}
-		
+
 		private void on_versionrb_changed(object o, EventArgs args)
 		{
 			foreach (RadioButton rb in versionrb.Group) {
@@ -225,7 +226,7 @@ namespace ExiflowCreateVersionExtension
 		{
 			//Console.WriteLine ("changed filename with: " + new_version_entry.Text);
 			new_filename_label.Text = GetFilenameDateAndNumberPart(this.currentphoto.Name) + new_version_entry.Text;
-			if ((FileExist(this.currentphoto, new_filename_label.Text)) || 
+			if ((FileExist(this.currentphoto, new_filename_label.Text)) ||
 				(! IsExiflowSchema(new_filename_label.Text)) ||
 				(this.currentphoto.VersionNameExists( new_version_entry.Text ))
 				)
@@ -238,7 +239,7 @@ namespace ExiflowCreateVersionExtension
 				gtk_ok.Sensitive=true;
 				overwrite_file_ok.Sensitive=false;
 				overwrite_file_ok.Active=false;
-			}		
+			}
 
 			if (this.currentphoto.VersionNameExists( new_version_entry.Text ))
 			{
@@ -293,7 +294,7 @@ namespace ExiflowCreateVersionExtension
 				overwrite_file_ok.Sensitive=false;
 				on_new_version_entry_changed(null,null);
 			}
-				
+
 		}
 
 		private bool IsExiflowSchema(string filename)
@@ -317,7 +318,7 @@ namespace ExiflowCreateVersionExtension
 			if (System.IO.File.Exists(CheapEscape(filenameuri.LocalPath)))
 				return true;
 			return false;
-			
+
 		}
 
 //		private static string GetNextVersionFileName (Photo p)
@@ -342,16 +343,16 @@ namespace ExiflowCreateVersionExtension
 		{
 			Regex exiflowpat = new Regex(@"^(\d{8}(-\d{6})?-.{3}\d{4}-.{2})(\d)(.)(.)\.([^.]*)$");
 			Match exiflowpatmatch = exiflowpat.Match(System.IO.Path.GetFileName(p.VersionUri(p.DefaultVersionId).LocalPath));
-			if ( (exiflowpatmatch.Groups[3].ToString() == "0") && 
-			      (exiflowpatmatch.Groups[4].ToString() == "0") && 
+			if ( (exiflowpatmatch.Groups[3].ToString() == "0") &&
+			      (exiflowpatmatch.Groups[4].ToString() == "0") &&
 			      (exiflowpatmatch.Groups[5].ToString() == "0" )) {
 				string [] possibleversions = { GetNextIntelligentVersionFileNames (p, 1, 0 , 0)};
 				return possibleversions;
 			}
-			else if ( (exiflowpatmatch.Groups[3].ToString() != "0") && 
-			      (exiflowpatmatch.Groups[4].ToString() == "0") && 
+			else if ( (exiflowpatmatch.Groups[3].ToString() != "0") &&
+			      (exiflowpatmatch.Groups[4].ToString() == "0") &&
 			      (exiflowpatmatch.Groups[5].ToString() == "0" )) {
-				string [] possibleversions = { 
+				string [] possibleversions = {
 				  GetNextIntelligentVersionFileNames (p, 0, 1, 0),
 				  GetNextIntelligentVersionFileNames (p, 1, 0, 0)
 				};
@@ -359,7 +360,7 @@ namespace ExiflowCreateVersionExtension
 			}
 			else
 			{
-				string [] possibleversions = { 
+				string [] possibleversions = {
 				  GetNextIntelligentVersionFileNames (p, 0, 0, 1),
 				  GetNextIntelligentVersionFileNames (p, 0, 1, 0),
 				  GetNextIntelligentVersionFileNames (p, 1, 0, 0)
@@ -372,26 +373,26 @@ namespace ExiflowCreateVersionExtension
 		{
 			Regex exiflowpat = new Regex(@"^(\d{8}(-\d{6})?-.{3}\d{4}-.{2})(.)(.)(.)\.([^.]*)$");
 			Match exiflowpatmatch = exiflowpat.Match(System.IO.Path.GetFileName(p.VersionUri(p.DefaultVersionId).LocalPath));
-			string filename = null;	
+			string filename = null;
 			if (x > 0)
 				filename = String.Format("{0}{1}{2}{3}.{4}",
-				 exiflowpatmatch.Groups[1], 
+				 exiflowpatmatch.Groups[1],
 				 GetNextValidChar(exiflowpatmatch.Groups[3].ToString(),x),
 				 0,
 				 0,
 				 exiflowpatmatch.Groups[6]);
 			if (y > 0)
 				filename = String.Format("{0}{1}{2}{3}.{4}",
-				 exiflowpatmatch.Groups[1], 
+				 exiflowpatmatch.Groups[1],
 				 exiflowpatmatch.Groups[3],
 				 GetNextValidChar(exiflowpatmatch.Groups[4].ToString(),y),
 				 0,
 				 exiflowpatmatch.Groups[6]);
 			if (z > 0)
 				filename = String.Format("{0}{1}{2}{3}.{4}",
-				 exiflowpatmatch.Groups[1], 
-				 exiflowpatmatch.Groups[3], 
-				 exiflowpatmatch.Groups[4], 
+				 exiflowpatmatch.Groups[1],
+				 exiflowpatmatch.Groups[3],
+				 exiflowpatmatch.Groups[4],
 				 GetNextValidChar(exiflowpatmatch.Groups[5].ToString(),z),
 				 exiflowpatmatch.Groups[6]);
 			System.Uri developed = GetUriForVersionFileName (p, filename);
@@ -406,7 +407,7 @@ namespace ExiflowCreateVersionExtension
 			}
 			return filename;
 		}
-		
+
 		private static string GetNextValidChar (string s, int i)
 		{
 			string validchars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -417,7 +418,7 @@ namespace ExiflowCreateVersionExtension
 				return null;
 			}
 		}
-			
+
 
 		private static string GetVersionName (string filename)
 		{
@@ -447,7 +448,7 @@ namespace ExiflowCreateVersionExtension
 			escaped = escaped.Replace (")", "\\)");
 			return escaped;
 		}
-		
+
 		private static string DirectoryPath (Photo p)
 		{
 			return p.VersionUri (Photo.OriginalVersionId).GetBaseUri ();
@@ -460,7 +461,7 @@ namespace ExiflowCreateVersionExtension
 		TypeFetcher type_fetcher;
 		//private string [] mime_types;
 		//private bool populated = false;
-		
+
 		List<string> ignore_apps;
 		public string [] IgnoreApp {
 			get {
@@ -475,7 +476,7 @@ namespace ExiflowCreateVersionExtension
 			get { return show_icons; }
 			set { show_icons = value; }
 		}
-	
+
 		public OpenWithComboBox (TypeFetcher type_fetcher) : this (type_fetcher, null )
 		{
 		}
@@ -497,14 +498,14 @@ namespace ExiflowCreateVersionExtension
 
 			foreach (string mime in type_fetcher())
 				System.Console.WriteLine ("Populating open with menu for {0}", mime);
-			
+
 			Widget [] dead_pool = Children;
 			for (int i = 0; i < dead_pool.Length; i++)
 					dead_pool [i].Destroy ();
-	
-	
 
-//System.Console.WriteLine ("Type: {0} ", type_fetcher.getType().ToString());	
+
+
+//System.Console.WriteLine ("Type: {0} ", type_fetcher.getType().ToString());
 			//store.AppendValues("", "", type_fetcher());
 			foreach (AppInfo app in ApplicationsFor (type_fetcher ())) {
 				System.Console.WriteLine ("Adding app {0} to open with combo box (binary name = {1}, Id = {2})", app.Name.ToString(),app.Executable.ToString(), app.Id.ToString());

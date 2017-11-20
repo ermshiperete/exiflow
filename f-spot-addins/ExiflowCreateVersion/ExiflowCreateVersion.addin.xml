@@ -1,15 +1,8 @@
-<Addin namespace="FSpot"
-	name="ExiflowCreateVersion"
-	version="0.8"
-	description="Create a new Version, supporting revision numbers of the exiflow project ( http://exiflow.org/ )."
-	url="http://exiflow.org/"
-	author="Sebastian Berthold"
-	category="Tools">
+<Addin namespace="FSpot" name="ExiflowCreateVersion" version="0.9" description="Create a new Version, supporting revision numbers of the exiflow project ( http://exiflow.org/ )." url="http://exiflow.org/" author="Sebastian Berthold" category="Tools">
 	<Dependencies>
-		<Addin id="Core" version="0.8"/>
+		<Addin id="Core" version="0.9"/>
 	</Dependencies>
 	<Extension path = "/FSpot/Menus/PhotoPopup">
 		<Command id = "ExiflowCreateVersion" _label = "Exiflow: _Create Version" command_type = "ExiflowCreateVersionExtension.ExiflowCreateVersion" insertbefore="OpenWith" />
 	</Extension>
 </Addin>
-

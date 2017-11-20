@@ -17,7 +17,8 @@ ASSEMBLIES = \
         -r:$(prefix)/lib/f-spot/gtk-sharp-beans.dll \
         -r:$(prefix)/lib/f-spot/gio-sharp.dll \
         -r:$(prefix)/lib/f-spot/Hyena.dll \
-        -r:$(prefix)/lib/f-spot/Hyena.Gui.dll 
+        -r:$(prefix)/lib/f-spot/Hyena.Gui.dll \
+		-r:$(prefix)/lib/f-spot/unique-sharp.dll
 
 RESOURCES = \
 	-resource:$(ADDIN).addin.xml
@@ -26,7 +27,7 @@ SOURCES = \
 	$(ADDIN).cs
 
 $(ADDIN).dll: $(SOURCES) $(ADDIN).addin.xml
-	PKG_CONFIG_PATH=$(prefix)/lib/pkgconfig gmcs -target:library $(SOURCES) $(PACKAGES) $(ASSEMBLIES) $(RESOURCES)
+	PKG_CONFIG_PATH=$(prefix)/lib/pkgconfig mcs -target:library $(SOURCES) $(PACKAGES) $(ASSEMBLIES) $(RESOURCES)
 
 install: all
 	cp *.dll $(INSTALL_PATH)/
@@ -38,4 +39,4 @@ clean:
 	rm -f *.dll *~ *.bak *.mpack mpack
 
 PHONY:
-	install clean all 
+	install clean all
